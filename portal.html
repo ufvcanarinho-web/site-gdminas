@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portal do Cliente — GDMINAS Energia</title>
+<style>
+:root{--roxo:#5A2D82;--roxo-esc:#3D1A5C;--laranja:#E8751A;--laranja-cl:#F5A623;--verde:#2E7D32;--cinza:#71718A;--bg:#faf7fd;--card:#fff}
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',Helvetica,Arial,sans-serif}
+body{background:var(--bg);color:#222;min-height:100vh}
+header{background:linear-gradient(135deg,var(--roxo),var(--roxo-esc));color:#fff;padding:16px 24px;display:flex;align-items:center;justify-content:space-between}
+header .brand{font-size:1.3rem;font-weight:800;letter-spacing:.5px}
+header .brand span{color:var(--laranja-cl)}
+header a.voltar{color:#fff;opacity:.85;font-size:.85rem;text-decoration:none}
+#btnSair{display:none;background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.4);padding:7px 14px;border-radius:8px;cursor:pointer;font-size:.85rem}
+.wrap{max-width:440px;margin:40px auto;padding:0 18px}
+.card{background:var(--card);border-radius:16px;padding:34px 30px;box-shadow:0 8px 30px rgba(90,45,130,.12)}
+.tabs{display:flex;gap:8px;margin-bottom:22px;background:#f1ecf8;border-radius:12px;padding:5px}
+.tabs button{flex:1;border:none;background:none;padding:11px;border-radius:9px;font-weight:700;font-size:.95rem;cursor:pointer;color:var(--cinza)}
+.tabs button.active{background:#fff;color:var(--roxo);box-shadow:0 2px 8px rgba(90,45,130,.12)}
+h2{color:var(--roxo);font-size:1.35rem;margin-bottom:6px}
+p.sub{color:var(--cinza);font-size:.9rem;margin-bottom:18px}
+label{display:block;font-size:.82rem;color:var(--roxo-esc);font-weight:600;margin:14px 0 6px}
+input{width:100%;padding:12px 14px;border:1.5px solid #e4dcf0;border-radius:10px;font-size:.95rem}
+input:focus{outline:none;border-color:var(--roxo)}
+button.cta{width:100%;margin-top:22px;background:linear-gradient(135deg,var(--laranja-cl),var(--laranja));color:#fff;border:none;padding:14px;border-radius:10px;font-size:1rem;font-weight:700;cursor:pointer}
+button.cta:disabled{opacity:.6;cursor:wait}
+.msg{margin-top:14px;padding:11px 13px;border-radius:9px;font-size:.85rem;display:none}
+.msg.erro{background:#fde8e8;color:#a12;display:block}
+.msg.ok{background:#e6f4ea;color:var(--verde);display:block}
+#painel{display:none}
+.ola{font-size:1.3rem;color:var(--roxo-esc);font-weight:700;margin-bottom:4px}
+.subinfo{color:var(--cinza);font-size:.9rem;margin-bottom:22px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-bottom:24px}
+.kpi{background:#faf7fd;border-radius:12px;padding:16px}
+.kpi h4{color:var(--cinza);font-size:.72rem;text-transform:uppercase;font-weight:600;margin-bottom:6px}
+.kpi .v{font-size:1.4rem;font-weight:800;color:var(--roxo)}
+table{width:100%;border-collapse:collapse;font-size:.88rem}
+th{background:#f3edfa;color:var(--roxo-esc);text-align:left;padding:10px;font-size:.74rem;text-transform:uppercase}
+td{padding:10px;border-top:1px solid #f0eaf8}
+footer{text-align:center;color:var(--cinza);font-size:.78rem;padding:24px}
+</style>
+</head>
+<body>
+<header>
+<div class="brand">GD<span>MINAS</span> · Portal do Cliente</div>
+<div>
+<a class='voltar' href='/'>← Voltar ao site</a>
+<button id="btnSair">Sair</button>
+</div>
+</header>
+
+<div class="wrap">
+<div class="card" id="auth">
+<div class="tabs">
+<button id="tabEntrar" class="active">Entrar</button>
+<button id="tabCadastrar">Cadastrar</button>
+</div>
+
+<div id="boxEntrar">
+<h2>Acesse sua conta</h2>
+<p class="sub">Veja suas faturas, créditos de energia e o status da sua usina.</p>
+<label for="emailIn">E-mail</label>
+<input id="emailIn" type="email" placeholder="seu@email.com" autocomplete="email">
+<label for="senhaIn">Senha</label>
+<input id="senhaIn" type="password" placeholder="••••••••" autocomplete="current-password">
+<button class="cta" id="btnEntrar">Entrar</button>
+<div class="msg" id="msgIn"></div>
+</div>
+
+<div id="boxCadastrar" style="display:none">
+<h2>Crie sua conta</h2>
+<p class="sub">Ainda não é cliente? Cadastre-se para acompanhar sua economia e contratar.</p>
+<label for="nomeUp">Nome completo</label>
+<input id="nomeUp" placeholder="Seu nome">
+<label for="emailUp">E-mail</label>
+<input id="emailUp" type="email" placeholder="seu@email.com" autocomplete="email">
+<label for="senhaUp">Crie uma senha</label>
+<input id="senhaUp" type="password" placeholder="mínimo 6 caracteres" autocomplete="new-password">
+<button class="cta" id="btnCadastrar">Criar conta</button>
+<div class="msg" id="msgUp"></div>
+</div>
+</div>
+
+<div class="card" id="painel">
+<div class="ola" id="ola">Olá!</div>
+<div class="subinfo" id="subInfo"></div>
+<div class="cards" id="cards"></div>
+<div id="faturasBox"></div>
+</div>
+</div>
+
+<footer>GDMINAS Energia · UFV Canarinho Geração de Energia Ltda · Suporte: (35) 99940-3060</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SB_URL="https://gvwmkwmwexwrmuegyqpv.supabase.co";
+const SB_KEY="sb_publishable_-kHLyf4_FSVRvFRlsibsTw_Yy8n33Ts";
+const sb=supabase.createClient(SB_URL,SB_KEY);
+const $=id=>document.getElementById(id);
+const brl=n=>"R$ "+Number(n||0).toLocaleString("pt-BR",{minimumFractionDigits:2});
+
+const params=new URLSearchParams(location.search);
+if(params.get("modo")==="cadastro") trocaTab("cadastrar");
+$("tabEntrar").onclick=()=>trocaTab("entrar");
+$("tabCadastrar").onclick=()=>trocaTab("cadastrar");
+function trocaTab(t){
+const ent=t==="entrar";
+$("tabEntrar").classList.toggle("active",ent);
+$("tabCadastrar").classList.toggle("active",!ent);
+$("boxEntrar").style.display=ent?"block":"none";
+$("boxCadastrar").style.display=ent?"none":"block";
+}
+
+$("btnEntrar").onclick=entrar;
+$("senhaIn").addEventListener("keydown",e=>{if(e.key==="Enter")entrar();});
+async function entrar(){
+const m=$("msgIn");m.className="msg";
+const email=$("emailIn").value.trim(),senha=$("senhaIn").value;
+if(!email||!senha){m.className="msg erro";m.textContent="Preencha e-mail e senha.";return;}
+$("btnEntrar").disabled=true;$("btnEntrar").textContent="Entrando...";
+const{error}=await sb.auth.signInWithPassword({email,password:senha});
+$("btnEntrar").disabled=false;$("btnEntrar").textContent="Entrar";
+if(error){m.className="msg erro";m.textContent="E-mail ou senha incorretos.";return;}
+carregarPainel();
+}
+
+$("btnCadastrar").onclick=cadastrar;
+async function cadastrar(){
+const m=$("msgUp");m.className="msg";
+const nome=$("nomeUp").value.trim(),email=$("emailUp").value.trim(),senha=$("senhaUp").value;
+if(!nome||!email||!senha){m.className="msg erro";m.textContent="Preencha nome, e-mail e senha.";return;}
+if(senha.length<6){m.className="msg erro";m.textContent="A senha precisa de pelo menos 6 caracteres.";return;}
+$("btnCadastrar").disabled=true;$("btnCadastrar").textContent="Criando...";
+const{data,error}=await sb.auth.signUp({email,password:senha,options:{data:{nome}}});
+$("btnCadastrar").disabled=false;$("btnCadastrar").textContent="Criar conta";
+if(error){m.className="msg erro";m.textContent=error.message.includes("already")?"Esse e-mail já tem conta. Use 'Entrar'.":"Não foi possível criar a conta. Tente novamente.";return;}
+if(data.session){m.className="msg ok";m.textContent="Conta criada! Entrando...";setTimeout(carregarPainel,800);}
+else{m.className="msg ok";m.textContent="Conta criada! Verifique seu e-mail para confirmar e depois use 'Entrar'.";}
+}
+
+$("btnSair").onclick=async()=>{await sb.auth.signOut();location.reload();};
+
+async function carregarPainel(){
+const{data:clientes}=await sb.from("clientes").select("*, usinas(codigo,nome,cidade)");
+$("auth").style.display="none";$("painel").style.display="block";$("btnSair").style.display="inline-block";
+if(!clientes||!clientes.length){
+$("ola").textContent="Bem-vindo!";
+$("subInfo").textContent="Sua conta foi criada. Em breve a GDMINAS vincula seu cadastro de cliente e suas faturas aparecem aqui. Dúvidas: (35) 99940-3060.";
+return;
+}
+const c=clientes[0];
+const{data:faturas}=await sb.from("faturas").select("*").order("mes_ref",{ascending:false});
+$("ola").textContent="Olá, "+c.nome.split(" ")[0]+"!";
+$("subInfo").textContent=(c.usinas?"Sua usina: "+c.usinas.nome+" ("+c.usinas.codigo+")":"")+" · Desconto: "+c.desconto_pct+"%";
+const fs=faturas||[];const pend=fs.filter(f=>f.status_pagamento!=="pago");
+$("cards").innerHTML=
+kc("Faturas em aberto",pend.length)+
+kc("Total a pagar",brl(pend.reduce((s,f)=>s+Number(f.total_cobrar||0),0)));
+if(!fs.length){$("faturasBox").innerHTML='<p style="color:#71718A;text-align:center;padding:16px">Nenhuma fatura ainda.</p>';return;}
+let h='<table><tr><th>Mês</th><th>Consumo</th><th>Valor</th><th>Venc.</th><th>Status</th><th>Boleto</th></tr>';
+fs.forEach(f=>{const pago=f.status_pagamento==="pago";
+h+='<tr><td>'+(f.mes_ref||"-")+'</td><td>'+(f.kwh_consumido||0)+' kWh</td><td>'+brl(f.total_cobrar)+'</td><td>'+(f.data_vencimento||"-")+'</td><td>'+(pago?"Pago":"Pendente")+'</td><td>'+(f.link_boleto?'<a href="'+f.link_boleto+'" target="_blank">abrir</a>':"-")+'</td></tr>';});
+$("faturasBox").innerHTML=h+'</table>';
+}
+function kc(t,v){return '<div class="kpi"><h4>'+t+'</h4><div class="v">'+v+'</div></div>';}
+sb.auth.getSession().then(({data})=>{if(data.session)carregarPainel();});
+</script>
+</body>
+</html>

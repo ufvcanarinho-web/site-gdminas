@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GDMINAS Energia — Economia Real com Energia Solar</title>
+<meta name="description" content="Energia solar por assinatura em Minas Gerais. Economize na conta de luz sem obras, sem painéis e sem investimento. Homologada CEMIG.">
+<style>
+:root{
+--roxo:#5A2D82; --roxo-esc:#3D1A5C; --laranja:#E8751A; --laranja-cl:#F5A623;
+--verde:#2E7D32; --cinza:#71718A; --bg:#faf7fd; --card:#fff;
+}
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',Helvetica,Arial,sans-serif}
+body{background:var(--bg);color:#262135;line-height:1.55}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1140px;margin:0 auto;padding:0 22px}
+
+/* HEADER */
+header{position:sticky;top:0;z-index:50;background:linear-gradient(135deg,var(--roxo),var(--roxo-esc));box-shadow:0 2px 18px rgba(61,26,92,.25)}
+.nav{display:flex;align-items:center;justify-content:space-between;padding:12px 22px;max-width:1140px;margin:0 auto}
+.brand{display:flex;align-items:center;gap:12px}
+.brand img{height:120px;width:auto;filter:drop-shadow(0 2px 6px rgba(0,0,0,.25))}
+.menu{display:flex;align-items:center;gap:24px}
+.menu a{color:#fff;font-size:.95rem;font-weight:500;opacity:.92}
+.menu a:hover{opacity:1}
+.btn-entrar{background:rgba(255,255,255,.14);border:1.5px solid rgba(255,255,255,.5);color:#fff;padding:9px 20px;border-radius:10px;font-weight:600;font-size:.92rem}
+.btn-entrar:hover{background:rgba(255,255,255,.25)}
+.btn-cta{background:linear-gradient(135deg,var(--laranja-cl),var(--laranja));color:#fff;padding:10px 22px;border-radius:10px;font-weight:700;font-size:.92rem;box-shadow:0 4px 14px rgba(232,117,26,.4)}
+@media(max-width:820px){.menu a:not(.btn-entrar):not(.btn-cta){display:none}.brand img{height:96px}}
+
+/* INTRO VÍDEO DE ABERTURA */
+#introVideo{position:fixed;inset:0;z-index:9999;background:#000;display:flex;align-items:center;justify-content:center;opacity:1;transition:opacity .6s ease}
+#introVideo.hide{opacity:0;pointer-events:none}
+#introVideo video{width:100%;height:100%;object-fit:cover}
+#pularIntro{position:fixed;bottom:26px;right:26px;z-index:10000;background:rgba(255,255,255,.16);border:1.5px solid rgba(255,255,255,.55);color:#fff;padding:9px 20px;border-radius:10px;font-weight:600;font-size:.9rem;cursor:pointer;font-family:'Segoe UI',Helvetica,Arial,sans-serif}
+#pularIntro:hover{background:rgba(255,255,255,.28)}
+
+/* HERO */
+.hero{background:linear-gradient(135deg,var(--roxo) 0%,var(--roxo-esc) 100%);color:#fff;padding:60px 0 80px;position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;right:-120px;top:-120px;width:420px;height:420px;background:radial-gradient(circle,rgba(245,166,35,.25),transparent 70%);border-radius:50%}
+.hero-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:50px;align-items:center}
+.badge-top{display:inline-block;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);padding:7px 16px;border-radius:30px;font-size:.85rem;font-weight:600;margin-bottom:22px}
+.hero h1{font-size:3rem;font-weight:800;line-height:1.1;margin-bottom:18px}
+.hero h1 .hl{color:var(--laranja-cl)}
+.hero p.sub{font-size:1.1rem;opacity:.92;margin-bottom:14px;max-width:520px}
+.hero p.fine{font-size:.8rem;opacity:.7;margin-bottom:26px;max-width:520px}
+.hero-btns{display:flex;gap:14px;flex-wrap:wrap}
+.hero-btns a{padding:14px 26px;border-radius:12px;font-weight:700}
+.b-orange{background:linear-gradient(135deg,var(--laranja-cl),var(--laranja));color:#fff;box-shadow:0 6px 20px rgba(232,117,26,.45)}
+.b-ghost{background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.4);color:#fff}
+.sim-card{background:#fff;color:#262135;border-radius:18px;padding:28px;box-shadow:0 20px 50px rgba(0,0,0,.3)}
+.sim-tag{display:inline-flex;align-items:center;gap:7px;background:var(--verde);color:#fff;font-size:.72rem;font-weight:700;text-transform:uppercase;padding:5px 12px;border-radius:20px;margin-bottom:14px}
+.sim-card h3{color:var(--roxo-esc);font-size:1.15rem;margin-bottom:16px}
+.sim-row{display:flex;justify-content:space-between;padding:11px 0;border-top:1px solid #f0eaf8;font-size:.95rem}
+.sim-row:first-of-type{border-top:none}
+.sim-row .neg{color:var(--laranja);font-weight:700}
+.sim-row.total{border-top:2px solid #ece3f7;margin-top:4px}
+.sim-row.total strong{color:var(--verde);font-size:1.25rem}
+@media(max-width:820px){.hero-grid{grid-template-columns:1fr;gap:34px}.hero h1{font-size:2.2rem}}
+
+/* STATS */
+.stats{background:#fff;padding:26px 0;box-shadow:0 4px 16px rgba(90,45,130,.06)}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;text-align:center}
+.stats .n{font-size:2rem;font-weight:800;color:var(--roxo)}
+.stats .l{font-size:.82rem;color:var(--cinza);text-transform:uppercase;font-weight:600}
+@media(max-width:720px){.stats-grid{grid-template-columns:repeat(2,1fr);gap:24px}}
+
+/* SECTIONS */
+section.blk{padding:64px 0}
+.eyebrow{color:var(--laranja);font-weight:700;font-size:.82rem;text-transform:uppercase;letter-spacing:1px;text-align:center}
+.blk h2{font-size:2rem;font-weight:800;color:var(--roxo-esc);text-align:center;margin:8px 0 14px}
+.blk .intro{color:var(--cinza);text-align:center;max-width:680px;margin:0 auto 40px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+@media(max-width:900px){.grid3,.grid4{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.grid3,.grid4{grid-template-columns:1fr}}
+.card{background:var(--card);border-radius:16px;padding:26px;box-shadow:0 6px 22px rgba(90,45,130,.07)}
+.card h3{color:var(--roxo);font-size:1.1rem;margin-bottom:8px}
+.card p{color:#555;font-size:.92rem}
+.step .num{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,var(--laranja-cl),var(--laranja));color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;margin-bottom:14px}
+.alt{background:#fff}
+
+/* COBERTURA */
+.cob{background:linear-gradient(135deg,var(--roxo),var(--roxo-esc));color:#fff}
+.cob h2{color:#fff}.cob .intro{color:rgba(255,255,255,.85)}
+.cob ul{list-style:none;max-width:640px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.cob li{background:rgba(255,255,255,.08);padding:12px 16px;border-radius:10px;font-size:.92rem}
+@media(max-width:600px){.cob ul{grid-template-columns:1fr}}
+
+/* SIMULADOR */
+#simulador .box{max-width:540px;margin:0 auto;background:#fff;border-radius:18px;padding:32px;box-shadow:0 10px 36px rgba(90,45,130,.12)}
+label{display:block;font-size:.85rem;color:var(--roxo-esc);font-weight:600;margin:16px 0 6px}
+input,select{width:100%;padding:12px 14px;border:1.5px solid #e4dcf0;border-radius:10px;font-size:.95rem;background:#fff}
+input:focus,select:focus{outline:none;border-color:var(--roxo)}
+.range-val{font-size:1.6rem;font-weight:800;color:var(--roxo);text-align:center;margin:6px 0}
+button.cta{width:100%;margin-top:22px;background:linear-gradient(135deg,var(--laranja-cl),var(--laranja));color:#fff;border:none;padding:15px;border-radius:10px;font-size:1.05rem;font-weight:700;cursor:pointer}
+#resultado{display:none;margin-top:24px;padding:24px;background:linear-gradient(135deg,#f1f9f2,#e6f4ea);border:1px solid #c6e6cd;border-radius:14px;text-align:center}
+#resultado .eco{font-size:.82rem;color:var(--cinza);text-transform:uppercase;font-weight:600}
+#resultado .big{font-size:2.2rem;font-weight:800;color:var(--verde);margin:4px 0}
+#resultado .linha{display:flex;justify-content:space-between;padding:7px 0;border-top:1px dashed #bcdfc4;font-size:.92rem}
+.form-lead{display:none;margin-top:22px;padding-top:20px;border-top:2px solid #ece3f7}
+.form-lead h3{color:var(--roxo-esc);font-size:1.05rem;margin-bottom:4px}
+.form-lead p{color:var(--cinza);font-size:.85rem;margin-bottom:8px}
+.msg{margin-top:14px;padding:11px;border-radius:9px;font-size:.88rem;display:none}
+.msg.ok{background:#e6f4ea;color:var(--verde);display:block}
+.msg.erro{background:#fde8e8;color:#a12;display:block}
+
+/* DEPOIMENTOS */
+.dep{font-style:italic;color:#444;margin-bottom:14px}
+.dep-aut{display:flex;align-items:center;gap:12px}
+.dep-ini{width:40px;height:40px;border-radius:50%;background:var(--roxo);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700}
+.dep-aut b{color:var(--roxo-esc)}.dep-aut span{display:block;font-size:.8rem;color:var(--cinza)}
+
+/* CONTATO */
+.contato-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px}
+.ci{display:flex;gap:14px;margin-bottom:18px}
+.ci .ic{font-size:1.3rem}
+.ci b{color:var(--roxo-esc);display:block;font-size:.95rem}
+.ci span{color:var(--cinza);font-size:.9rem}
+@media(max-width:760px){.contato-grid{grid-template-columns:1fr}}
+
+/* FOOTER */
+footer{background:var(--roxo-esc);color:rgba(255,255,255,.85);padding:40px 0 24px;text-align:center}
+footer .fbrand{font-size:1.3rem;font-weight:800;color:#fff;margin-bottom:8px}
+footer .fbrand span{color:var(--laranja-cl)}
+footer .fline{font-size:.85rem;opacity:.8;max-width:520px;margin:0 auto 18px}
+footer .fbase{font-size:.78rem;opacity:.6;border-top:1px solid rgba(255,255,255,.15);padding-top:18px;margin-top:18px}
+.cta-band{background:linear-gradient(135deg,var(--laranja-cl),var(--laranja));color:#fff;text-align:center;padding:46px 22px}
+.cta-band h2{font-size:1.8rem;font-weight:800;margin-bottom:10px}
+.cta-band a{display:inline-block;margin-top:18px;background:#fff;color:var(--laranja);padding:14px 30px;border-radius:12px;font-weight:700}
+</style>
+</head>
+<body>
+
+<div id="introVideo">
+<video id="iv" autoplay muted playsinline preload="auto">
+<source src="video_intro.mp4" type="video/mp4">
+</video>
+<button id="pularIntro" onclick="fecharIntro()">Pular ▶</button>
+</div>
+<script>
+function fecharIntro(){var o=document.getElementById('introVideo');if(!o||o.classList.contains('hide'))return;o.classList.add('hide');setTimeout(function(){o.style.display='none';},650);}
+(function(){var v=document.getElementById('iv');if(!v){fecharIntro();return;}
+v.addEventListener('ended',fecharIntro);
+v.addEventListener('error',fecharIntro);
+setTimeout(fecharIntro,6000);
+var p=v.play();if(p&&p.catch)p.catch(function(){/* autoplay bloqueado: mantém vídeo com botão Pular */});})();
+</script>
+
+<header>
+<div class="nav">
+<a class="brand" href="#topo" style="text-decoration:none"><img src="logo_gdminas_transparente.png" alt="GDMINAS Energia"></a>
+<nav class="menu">
+<a href="#sobre">Sobre</a>
+<a href="#como">Como Funciona</a>
+<a href="#vantagens">Vantagens</a>
+<a href="#cobertura">Cobertura</a>
+<a href="#simulador">Simulador</a>
+<a class='btn-entrar' href='/portal?modo=cadastro'>Cadastrar</a>
+<a class='btn-entrar' href='/portal'>Entrar</a>
+<a class="btn-cta" href="#simulador">Simular</a>
+</nav>
+</div>
+</header>
+
+<a id="topo"></a>
+<section class="hero">
+<div class="wrap hero-grid">
+<div>
+<span class="badge-top">⚡ 19 MW de capacidade instalada em Minas Gerais</span>
+<h1>Economize de <span class="hl">18% a 40%</span> na sua energia</h1>
+<p class="sub">Energia solar por assinatura, sem obras, sem painéis e sem investimento inicial. Créditos solares direto na sua conta da CEMIG.</p>
+<p class="fine">Desconto aplicado sobre a energia compensável da sua conta. Sem fidelidade e sem multa.</p>
+<div class="hero-btns">
+<a class="b-orange" href="#simulador">Simular Economia</a>
+<a class="b-ghost" href="https://wa.me/5535999403060" target="_blank">Falar com Consultor</a>
+</div>
+</div>
+<div class="sim-card">
+<span class="sim-tag">📊 Simulação real</span>
+<h3>Exemplo de economia mensal</h3>
+<div class="sim-row"><span>Conta atual (CEMIG)</span><strong>R$ 1.200,00</strong></div>
+<div class="sim-row"><span>Desconto GDMINAS</span><span class="neg">- 25%</span></div>
+<div class="sim-row"><span>Residual CEMIG</span><strong>R$ 100,00</strong></div>
+<div class="sim-row total"><span>Novo valor total</span><strong>R$ 900,00</strong></div>
+<div class="sim-row"><span>Sua economia mensal</span><strong style="color:var(--verde)">R$ 300,00</strong></div>
+</div>
+</div>
+</section>
+
+<div class="stats">
+<div class="wrap stats-grid">
+<div><div class="n">19 MW</div><div class="l">Capacidade Instalada</div></div>
+<div><div class="n">7 MW</div><div class="l">Geração Própria</div></div>
+<div><div class="n">12 MW</div><div class="l">Usinas Parceiras</div></div>
+<div><div class="n">853</div><div class="l">Municípios em MG</div></div>
+</div>
+</div>
+
+<section class="blk" id="sobre">
+<div class="wrap">
+<div class="eyebrow">Sobre nós</div>
+<h2>Quem é a GDMINAS Energia</h2>
+<p class="intro">Somos uma empresa mineira especializada em Geração Distribuída Compartilhada. Operamos usinas solares fotovoltaicas homologadas pela CEMIG, gerando créditos de energia compensados diretamente na conta de luz dos nossos clientes. Com 7 MW de geração própria e mais 12 MW em usinas parceiras, totalizamos 19 MW de capacidade instalada, atendendo residências, comércios, indústrias, produtores rurais e templos religiosos em todo o estado de Minas Gerais.</p>
+<div class="grid4">
+<div class="card"><h3>19 MW</h3><p>de capacidade total instalada.</p></div>
+<div class="card"><h3>100% solar</h3><p>energia limpa e renovável.</p></div>
+<div class="card"><h3>Homologada CEMIG</h3><p>dentro das regras da ANEEL.</p></div>
+<div class="card"><h3>Todo o estado</h3><p>853 municípios de Minas Gerais.</p></div>
+</div>
+</div>
+</section>
+
+<section class="blk alt" id="como">
+<div class="wrap">
+<div class="eyebrow">Processo</div>
+<h2>Como funciona?</h2>
+<p class="intro">Aderir à GDMINAS é simples, rápido e sem burocracia. Em 4 passos você começa a economizar.</p>
+<div class="grid4">
+<div class="card step"><div class="num">1</div><h3>Assine o Contrato</h3><p>Assinatura digital, sem sair de casa. Processo 100% online em menos de 5 minutos.</p></div>
+<div class="card step"><div class="num">2</div><h3>Cadastro na CEMIG</h3><p>Nós cuidamos de tudo. Cadastramos sua unidade consumidora como beneficiária na CEMIG.</p></div>
+<div class="card step"><div class="num">3</div><h3>Homologação</h3><p>A CEMIG homologa sua UC no sistema de compensação de créditos em 30 a 60 dias.</p></div>
+<div class="card step"><div class="num">4</div><h3>Comece a Economizar</h3><p>Os créditos aparecem na sua fatura CEMIG. Economia automática todo mês!</p></div>
+</div>
+</div>
+</section>
+
+<section class="blk" id="vantagens">
+<div class="wrap">
+<div class="eyebrow">Vantagens</div>
+<h2>Por que escolher a GDMINAS?</h2>
+<p class="intro">Economize na conta de luz sem instalar nada. Energia limpa com zero complicação.</p>
+<div class="grid3">
+<div class="card"><h3>Economia de 18% a 40%</h3><p>Desconto real sobre a energia compensável da sua conta. Sem pegadinhas, sem taxas escondidas.</p></div>
+<div class="card"><h3>Zero Obras</h3><p>Sem painéis no seu telhado, sem instalação, sem equipe técnica na sua propriedade. Tudo remoto.</p></div>
+<div class="card"><h3>Energia 100% Limpa</h3><p>Energia solar fotovoltaica, renovável e sustentável. Um planeta mais verde.</p></div>
+<div class="card"><h3>Monitoramento Online</h3><p>Acompanhe a geração da sua usina em tempo real pelo nosso portal. Transparência total.</p></div>
+<div class="card"><h3>Sem Fidelidade</h3><p>Rescisão sem multa, com aviso prévio de 90 dias. Liberdade total para o cliente.</p></div>
+<div class="card"><h3>Suporte Dedicado</h3><p>Equipe pronta para atender por WhatsApp, e-mail e telefone. Atendimento humanizado.</p></div>
+</div>
+</div>
+</section>
+
+<section class="blk cob" id="cobertura">
+<div class="wrap">
+<div class="eyebrow" style="color:var(--laranja-cl)">Cobertura</div>
+<h2>Atendemos todo o estado de Minas Gerais</h2>
+<p class="intro">Com 19 MW de capacidade instalada em usinas estrategicamente localizadas, atendemos os 853 municípios do estado, do Triângulo Mineiro ao Vale do Jequitinhonha.</p>
+<ul>
+<li>Região Metropolitana de Belo Horizonte</li>
+<li>Sul de Minas e Alto Paranaíba</li>
+<li>Triângulo Mineiro</li>
+<li>Zona da Mata e Campo das Vertentes</li>
+<li>Norte de Minas e Jequitinhonha</li>
+<li>Todas as áreas de concessão CEMIG</li>
+</ul>
+</div>
+</section>
+
+<section class="blk alt" id="simulador">
+<div class="wrap">
+<div class="eyebrow">Simulador</div>
+<h2>Simule sua economia agora</h2>
+<p class="intro">Descubra quanto você pode economizar na sua conta de energia com a GDMINAS.</p>
+<div class="box">
+<label for="valor">Valor médio da sua conta de energia</label>
+<div class="range-val" id="valorTxt">R$ 800</div>
+<input id="valor" type="range" min="200" max="20000" step="50" value="800">
+<label for="tipo">Tipo de unidade consumidora</label>
+<select id="tipo">
+<option>Residencial</option><option>Comercial / Empresarial</option>
+<option>Industrial</option><option>Produtor Rural</option><option>Templo Religioso</option>
+</select>
+<button class="cta" id="btnCalc">Calcular Minha Economia</button>
+<div id="resultado">
+<div class="eco">Sua economia estimada</div>
+<div class="big" id="ecoMes">R$ 0/mês</div>
+<div class="linha"><span>Desconto aplicado</span><strong id="rDesc">—</strong></div>
+<div class="linha"><span>Economia por ano</span><strong id="rAno">—</strong></div>
+<div class="linha"><span>Em 5 anos</span><strong id="r5">—</strong></div>
+<div class="form-lead" id="formLead">
+<h3>Quero esse desconto</h3>
+<p>Deixe seu contato — a GDMINAS faz o resto, sem você instalar nada.</p>
+<input id="nome" placeholder="Seu nome" style="margin-bottom:8px">
+<input id="whatsapp" placeholder="WhatsApp (com DDD)" style="margin-bottom:8px">
+<input id="email" type="email" placeholder="E-mail (opcional)">
+<button class="cta" id="btnLead">Quero economizar</button>
+<div class="msg" id="msgLead"></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<section class="blk" id="depoimentos">
+<div class="wrap">
+<div class="eyebrow">Depoimentos</div>
+<h2>O que nossos clientes dizem</h2>
+<div class="grid3">
+<div class="card"><p class="dep">"Reduzi minha conta de R$ 3.200 para menos de R$ 2.000. Em um ano já economizei mais de R$ 14 mil. Processo simples e sem dor de cabeça."</p><div class="dep-aut"><div class="dep-ini">JM</div><div><b>José Martins</b><span>Comerciante — Varginha/MG</span></div></div></div>
+<div class="card"><p class="dep">"Como produtor rural, energia era meu maior custo. Hoje economizo 38% todo mês e não precisei instalar nada na propriedade."</p><div class="dep-aut"><div class="dep-ini">CF</div><div><b>Carlos Ferreira</b><span>Produtor Rural — Baependi/MG</span></div></div></div>
+<div class="card"><p class="dep">"O atendimento é excelente e a economia real. Acompanho tudo pelo portal online. Recomendo para qualquer empresa em Minas."</p><div class="dep-aut"><div class="dep-ini">AL</div><div><b>Ana Luísa</b><span>Empresária — Belo Horizonte/MG</span></div></div></div>
+</div>
+</div>
+</section>
+
+<div class="cta-band">
+<h2>Pronto para economizar na conta de luz?</h2>
+<p>Atendemos todo o estado de Minas Gerais. Descubra quanto você pode economizar.</p>
+<a href="https://wa.me/5535999403060" target="_blank">WhatsApp (35) 99940-3060</a>
+</div>
+
+<section class="blk alt" id="contato">
+<div class="wrap">
+<div class="eyebrow">Contato</div>
+<h2>Fale conosco</h2>
+<p class="intro">Estamos prontos para atender você. Escolha o canal que preferir.</p>
+<div class="contato-grid">
+<div>
+<div class="ci"><div class="ic">💬</div><div><b>WhatsApp</b><span>(35) 99940-3060</span></div></div>
+<div class="ci"><div class="ic">✉️</div><div><b>E-mail SAC</b><span>sac@gdminasenergia.com.br</span></div></div>
+<div class="ci"><div class="ic">📧</div><div><b>Atendimento</b><span>atendimento@gdminasenergia.com.br</span></div></div>
+<div class="ci"><div class="ic">📍</div><div><b>Endereço</b><span>Est. do Vale Formoso KM 11,5 — Baependi/MG — CEP 37.443-000</span></div></div>
+<div class="ci"><div class="ic">🏢</div><div><b>Razão Social</b><span>UFV Canarinho Geração de Energia Ltda · CNPJ 35.608.425/0001-62</span></div></div>
+</div>
+<div class="card">
+<h3 style="color:var(--roxo);margin-bottom:6px">Solicite sua simulação</h3>
+<input id="cNome" placeholder="Nome completo" style="margin-bottom:8px">
+<input id="cWpp" placeholder="Telefone / WhatsApp" style="margin-bottom:8px">
+<input id="cEmail" type="email" placeholder="E-mail" style="margin-bottom:8px">
+<input id="cCidade" placeholder="Cidade / MG" style="margin-bottom:8px">
+<input id="cValor" placeholder="Valor médio da conta (R$)">
+<button class="cta" id="btnContato">Solicitar Simulação Gratuita</button>
+<div class="msg" id="msgContato"></div>
+</div>
+</div>
+</div>
+</section>
+
+<footer>
+<div class="wrap">
+<div class="fbrand">GD<span>MINAS</span> Energia</div>
+<p class="fline">Energia solar por assinatura para todo o estado de Minas Gerais. Economize de 18% a 40% sobre a energia compensável da sua conta, sem instalar painéis.</p>
+<p style="font-size:.85rem">sac@gdminasenergia.com.br · (35) 99940-3060 · <a href='/portal' style='color:var(--laranja-cl);font-weight:600'>Área do Cliente</a></p>
+<div class="fbase">© 2026 GDMINAS Energia · UFV Canarinho Geração de Energia Ltda · CNPJ 35.608.425/0001-62 · Baependi/MG · Homologada CEMIG</div>
+</div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SB_URL="https://gvwmkwmwexwrmuegyqpv.supabase.co";
+const SB_KEY="sb_publishable_-kHLyf4_FSVRvFRlsibsTw_Yy8n33Ts";
+const sb=supabase.createClient(SB_URL,SB_KEY);
+const $=id=>document.getElementById(id);
+const brl=n=>"R$ "+Number(n||0).toLocaleString("pt-BR",{maximumFractionDigits:0});
+function faixa(v){if(v<=300)return 18;if(v<=500)return 20;if(v<=800)return 22;if(v<=1200)return 25;if(v<=2000)return 28;if(v<=3000)return 30;if(v<=5000)return 33;if(v<=8000)return 36;if(v<=15000)return 38;return 40;}
+let ult={};
+$("valor").addEventListener("input",e=>{$("valorTxt").textContent="R$ "+Number(e.target.value).toLocaleString("pt-BR");});
+$("btnCalc").addEventListener("click",()=>{
+const v=parseInt($("valor").value),d=faixa(v),mes=v*d/100;
+ult={valor:v,tipo:$("tipo").value,desconto:d};
+$("ecoMes").textContent=brl(mes)+"/mês";$("rDesc").textContent=d+"%";
+$("rAno").textContent=brl(mes*12);$("r5").textContent=brl(mes*60);
+$("resultado").style.display="block";$("formLead").style.display="block";
+$("resultado").scrollIntoView({behavior:"smooth",block:"nearest"});
+});
+async function gravarLead(nome,wpp,email,canal,extra){
+return await sb.from("leads").insert(Object.assign({nome,whatsapp:wpp,email:email||null,canal_origem:canal,status:"novo"},extra||{}),{returning:"minimal"});
+}
+$("btnLead").addEventListener("click",async()=>{
+const nome=$("nome").value.trim(),wpp=$("whatsapp").value.trim(),email=$("email").value.trim(),m=$("msgLead");
+m.className="msg";
+if(!nome||!wpp){m.className="msg erro";m.textContent="Preencha nome e WhatsApp.";return;}
+$("btnLead").disabled=true;$("btnLead").textContent="Enviando...";
+const{error}=await gravarLead(nome,wpp,email,"site-simulador",{valor_conta:ult.valor,desconto_simulado:ult.desconto});
+$("btnLead").disabled=false;$("btnLead").textContent="Quero economizar";
+if(error){m.className="msg erro";m.textContent="Algo deu errado. Fale pelo WhatsApp (35) 99940-3060.";return;}
+m.className="msg ok";m.textContent="Recebemos seu contato! A GDMINAS vai falar com você em breve. 🌞";
+$("nome").value=$("whatsapp").value=$("email").value="";
+});
+$("btnContato").addEventListener("click",async()=>{
+const nome=$("cNome").value.trim(),wpp=$("cWpp").value.trim(),email=$("cEmail").value.trim(),m=$("msgContato");
+m.className="msg";
+if(!nome||!wpp){m.className="msg erro";m.textContent="Preencha nome e telefone.";return;}
+$("btnContato").disabled=true;$("btnContato").textContent="Enviando...";
+const val=parseInt(($("cValor").value||"0").replace(/\D/g,""))||null;
+const{error}=await gravarLead(nome,wpp,email,"site-contato",{valor_conta:val});
+$("btnContato").disabled=false;$("btnContato").textContent="Solicitar Simulação Gratuita";
+if(error){m.className="msg erro";m.textContent="Algo deu errado. Fale pelo WhatsApp (35) 99940-3060.";return;}
+m.className="msg ok";m.textContent="Solicitação recebida! Entraremos em contato em breve. 🌞";
+$("cNome").value=$("cWpp").value=$("cEmail").value=$("cCidade").value=$("cValor").value="";
+});
+</script>
+</body>
+</html>
