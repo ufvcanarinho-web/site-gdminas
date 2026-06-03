@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gestão — GDMINAS Energia</title>
+<style>
+:root{--roxo:#5A2D82;--roxo-esc:#3D1A5C;--laranja:#E8751A;--laranja-cl:#F5A623;--verde:#2E7D32;--cinza:#71718A;--bg:#faf7fd;--card:#fff}
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',Helvetica,Arial,sans-serif}
+body{background:var(--bg);color:#222}
+header{background:linear-gradient(135deg,var(--roxo),var(--roxo-esc));color:#fff;padding:14px 22px;display:flex;align-items:center;justify-content:space-between}
+header .brand{font-size:1.2rem;font-weight:800}header .brand span{color:var(--laranja-cl)}
+#btnSair{display:none;background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.4);padding:7px 14px;border-radius:8px;cursor:pointer;font-size:.85rem}
+.wrap{max-width:1000px;margin:24px auto;padding:0 16px}
+.card{background:var(--card);border-radius:14px;padding:22px;box-shadow:0 6px 22px rgba(90,45,130,.08);margin-bottom:20px}
+h2{color:var(--roxo);font-size:1.1rem;margin-bottom:12px}
+label{display:block;font-size:.82rem;color:var(--roxo-esc);font-weight:600;margin:12px 0 5px}
+input,select{width:100%;padding:11px 13px;border:1.5px solid #e4dcf0;border-radius:9px;font-size:.95rem;background:#fff}
+input:focus,select:focus{outline:none;border-color:var(--roxo)}
+button.cta{background:linear-gradient(135deg,var(--laranja-cl),var(--laranja));color:#fff;border:none;padding:12px 18px;border-radius:9px;font-weight:700;cursor:pointer;margin-top:14px}
+button.cta:disabled{opacity:.6;cursor:wait}
+.msg{margin-top:12px;padding:10px 12px;border-radius:8px;font-size:.86rem;display:none}
+.msg.ok{background:#e6f4ea;color:var(--verde);display:block}.msg.erro{background:#fde8e8;color:#a12;display:block}.msg.info{background:#eef0fb;color:var(--roxo-esc);display:block}
+table{width:100%;border-collapse:collapse;font-size:.85rem;margin-top:8px}
+th{background:#f3edfa;color:var(--roxo-esc);text-align:left;padding:8px;font-size:.72rem;text-transform:uppercase}
+td{padding:8px;border-top:1px solid #f0eaf8}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px}
+.kpi{background:#faf7fd;border-radius:10px;padding:14px}.kpi h4{color:var(--cinza);font-size:.7rem;text-transform:uppercase;margin-bottom:5px}.kpi .v{font-size:1.25rem;font-weight:800;color:var(--roxo)}
+.flag{background:#fff5e6;color:#8a4b00;font-size:.7rem;padding:2px 7px;border-radius:10px;font-weight:700}
+#painel{display:none}
+.dim{color:var(--cinza);font-size:.82rem}
+</style>
+</head>
+<body>
+<header>
+<div class="brand">GD<span>MINAS</span> · Gestão</div>
+<button id="btnSair">Sair</button>
+</header>
+
+<div class="wrap">
+<div class="card" id="auth" style="max-width:420px;margin:40px auto">
+<h2>Acesso da equipe</h2>
+<p class="dim">Painel restrito à administração da GDMINAS.</p>
+<label for="email">E-mail</label>
+<input id="email" type="email" autocomplete="email">
+<label for="senha">Senha</label>
+<input id="senha" type="password" autocomplete="current-password">
+<button class="cta" id="btnEntrar" style="width:100%">Entrar</button>
+<div class="msg" id="msgAuth"></div>
+</div>
+
+<div id="painel">
+<div class="card">
+<h2>📊 KPIs do mês</h2>
+<div class="kpis" id="kpis"><span class="dim">carregando...</span></div>
+</div>
+
+<div class="card">
+<h2>📷 Leitura de medidor (cobrança DIRETO)</h2>
+<p class="dim">Escolha o medidor, suba a foto do display (ou tire foto) — o sistema lê e calcula o consumo.</p>
+<label for="medidor">Medidor</label>
+<select id="medidor"><option value="">carregando...</option></select>
+<label for="mesref">Mês de referência</label>
+<input id="mesref" type="month">
+<label for="fotoMed">Foto do display</label>
+<input type="file" id="fotoMed" accept="image/*">
+<input type="file" id="camMed" accept="image/*" capture="environment" style="display:none">
+<button type="button" class="cta" id="btnCamMed" style="background:#fff;color:var(--roxo);border:1.5px solid var(--roxo)">📷 Tirar foto</button>
+<div class="msg" id="msgLeitura"></div>
+<div id="leituraRes" style="display:none;margin-top:14px;padding:14px;background:#f6f1fc;border-radius:10px">
+<div>Leitura lida: <strong id="lLeitura">—</strong> · confiança: <span id="lConf">—</span></div>
+<button class="cta" id="btnRegistrar">Registrar leitura e calcular consumo</button>
+<div class="msg" id="msgReg"></div>
+</div>
+</div>
+
+<div class="card">
+<h2>⚠️ Leituras pendentes de revisão</h2>
+<div id="pendentes"><span class="dim">carregando...</span></div>
+</div>
+
+<div class="card">
+<h2>🎯 Leads recentes</h2>
+<div id="leads"><span class="dim">carregando...</span></div>
+</div>
+
+<div class="card">
+<h2>💰 Faturas em aberto</h2>
+<div id="faturas"><span class="dim">carregando...</span></div>
+</div>
+</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SB_URL="https://gvwmkwmwexwrmuegyqpv.supabase.co";
+const SB_KEY="sb_publishable_-kHLyf4_FSVRvFRlsibsTw_Yy8n33Ts";
+const sb=supabase.createClient(SB_URL,SB_KEY);
+const $=id=>document.getElementById(id);
+const brl=n=>"R$ "+Number(n||0).toLocaleString("pt-BR",{minimumFractionDigits:2});
+let leituraPendente=null;
+
+$("mesref").value=new Date().toISOString().slice(0,7);
+
+$("btnEntrar").onclick=entrar;
+$("senha").addEventListener("keydown",e=>{if(e.key==="Enter")entrar();});
+async function entrar(){
+const m=$("msgAuth");m.className="msg";
+const email=$("email").value.trim(),senha=$("senha").value;
+if(!email||!senha){m.className="msg erro";m.textContent="Preencha e-mail e senha.";return;}
+$("btnEntrar").disabled=true;$("btnEntrar").textContent="Entrando...";
+const{error}=await sb.auth.signInWithPassword({email,password:senha});
+$("btnEntrar").disabled=false;$("btnEntrar").textContent="Entrar";
+if(error){m.className="msg erro";m.textContent="E-mail ou senha incorretos.";return;}
+checarAdmin();
+}
+$("btnSair").onclick=async()=>{await sb.auth.signOut();location.reload();};
+
+async function checarAdmin(){
+const{data:isAdmin}=await sb.rpc("sou_admin");
+if(!isAdmin){$("msgAuth").className="msg erro";$("msgAuth").textContent="Esta conta não é administradora.";await sb.auth.signOut();return;}
+$("auth").style.display="none";$("painel").style.display="block";$("btnSair").style.display="inline-block";
+carregarTudo();
+}
+
+async function carregarTudo(){
+carregarKpis();carregarMedidores();carregarPendentes();carregarLeads();carregarFaturas();
+}
+
+async function carregarKpis(){
+const mes=$("mesref").value;
+const{data,error}=await sb.rpc("kpis_mes",{p_mes:mes});
+const el=$("kpis");
+if(error||!data){el.innerHTML='<span class="dim">Sem KPIs para '+mes+'.</span>';return;}
+const obj=Array.isArray(data)?(data[0]||{}):data;
+let h="";for(const k in obj){h+='<div class="kpi"><h4>'+k.replace(/_/g," ")+'</h4><div class="v">'+(obj[k]??"—")+'</div></div>';}
+el.innerHTML=h||'<span class="dim">Sem dados.</span>';
+}
+
+async function carregarMedidores(){
+const{data}=await sb.from("medidores").select("id,tipo,referencia,descricao,fator_tc,cliente_id,usina_id").order("id");
+const sel=$("medidor");
+if(!data||!data.length){sel.innerHTML='<option value="">nenhum medidor</option>';return;}
+sel.innerHTML='<option value="">selecione...</option>'+data.map(m=>'<option value="'+m.id+'">'+(m.referencia||("medidor "+m.id))+(m.descricao?(" — "+m.descricao):"")+(m.tipo?(" ["+m.tipo+"]"):"")+(m.fator_tc?(" ×"+m.fator_tc):"")+'</option>').join("");
+}
+
+$("btnCamMed").addEventListener("click",()=>$("camMed").click());
+$("fotoMed").addEventListener("change",e=>lerMedidor(e.target.files[0]));
+$("camMed").addEventListener("change",e=>lerMedidor(e.target.files[0]));
+async function lerMedidor(f){
+const m=$("msgLeitura");if(!f)return;
+if(!$("medidor").value){m.className="msg erro";m.textContent="Escolha o medidor antes.";return;}
+m.className="msg info";m.textContent="Lendo o display... aguarde.";
+$("leituraRes").style.display="none";
+let b64;try{b64=await new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(String(r.result).split(",")[1]);r.onerror=rej;r.readAsDataURL(f);});}catch{m.className="msg erro";m.textContent="Não consegui ler a imagem.";return;}
+const{data:sess}=await sb.auth.getSession();
+const tok=sess&&sess.session?sess.session.access_token:SB_KEY;
+try{
+const resp=await fetch(SB_URL+"/functions/v1/ocr-medidor",{method:"POST",headers:{"Content-Type":"application/json","apikey":SB_KEY,"Authorization":"Bearer "+tok},body:JSON.stringify({file_base64:b64,mime_type:f.type||"image/jpeg",tipo:($("medidor").selectedOptions[0].text.match(/\[(.*?)\]/)||[])[1]||"medidor"})});
+const j=await resp.json();
+if(!j.ok){m.className="msg erro";m.textContent=j.error||"Não consegui ler o display.";return;}
+const d=j.dados||{};leituraPendente={leitura:d.leitura,confianca:d.confianca};
+$("lLeitura").textContent=(d.leitura!=null?d.leitura:"ilegível")+(d.unidade?(" "+d.unidade):"");
+$("lConf").textContent=d.confianca!=null?Math.round(d.confianca*100)+"%":"—";
+m.className="msg ok";m.textContent="Display lido. Confira e registre.";
+$("leituraRes").style.display="block";$("msgReg").className="msg";$("msgReg").textContent="";
+}catch(e){m.className="msg erro";m.textContent="Falha ao enviar a foto.";}
+}
+
+$("btnRegistrar").addEventListener("click",async()=>{
+const m=$("msgReg");m.className="msg";
+if(!leituraPendente||leituraPendente.leitura==null){m.className="msg erro";m.textContent="Leitura inválida.";return;}
+$("btnRegistrar").disabled=true;$("btnRegistrar").textContent="Registrando...";
+const{data,error}=await sb.rpc("registrar_leitura",{p_medidor_id:Number($("medidor").value),p_mes_ref:$("mesref").value,p_leitura_atual:Number(leituraPendente.leitura),p_confianca:leituraPendente.confianca,p_origem:"foto-gestao"});
+$("btnRegistrar").disabled=false;$("btnRegistrar").textContent="Registrar leitura e calcular consumo";
+if(error){m.className="msg erro";m.textContent="Erro ao registrar: "+error.message;return;}
+const r=Array.isArray(data)?data[0]:data;
+if(r&&r.kwh!=null){m.className="msg ok";m.textContent="Registrado! Consumo calculado: "+Number(r.kwh).toLocaleString("pt-BR")+" kWh"+(r.precisa_revisao?" (marcado p/ revisão — confira).":".");}
+else{m.className="msg ok";m.textContent="Registrado como leitura inicial (sem consumo ainda — precisa de uma 2ª leitura no próximo mês).";}
+carregarPendentes();
+});
+
+async function carregarPendentes(){
+const{data}=await sb.from("leituras").select("id,medidor_id,mes_ref,leitura_anterior,leitura_atual,kwh_calculado,confianca").eq("precisa_revisao",true).order("id",{ascending:false}).limit(20);
+const el=$("pendentes");
+if(!data||!data.length){el.innerHTML='<span class="dim">Nenhuma pendência. 👍</span>';return;}
+el.innerHTML='<table><tr><th>Medidor</th><th>Mês</th><th>Anterior</th><th>Atual</th><th>kWh</th><th>Conf.</th></tr>'+data.map(l=>'<tr><td>'+l.medidor_id+'</td><td>'+(l.mes_ref||"-")+'</td><td>'+(l.leitura_anterior??"—")+'</td><td>'+(l.leitura_atual??"—")+'</td><td>'+(l.kwh_calculado??"—")+'</td><td>'+(l.confianca!=null?Math.round(l.confianca*100)+"%":"—")+'</td></tr>').join("")+'</table>';
+}
+
+async function carregarLeads(){
+const{data}=await sb.from("leads").select("nome,whatsapp,valor_conta,desconto_simulado,tem_gd_ativa,concorrente,canal_origem,criado_em").order("criado_em",{ascending:false}).limit(15);
+const el=$("leads");
+if(!data||!data.length){el.innerHTML='<span class="dim">Nenhum lead ainda.</span>';return;}
+el.innerHTML='<table><tr><th>Nome</th><th>WhatsApp</th><th>Conta</th><th>Desc.</th><th>Origem</th><th>GD?</th></tr>'+data.map(l=>'<tr><td>'+(l.nome||"-")+'</td><td>'+(l.whatsapp||"-")+'</td><td>'+(l.valor_conta?brl(l.valor_conta):"—")+'</td><td>'+(l.desconto_simulado?l.desconto_simulado+"%":"—")+'</td><td>'+(l.canal_origem||"-")+'</td><td>'+(l.tem_gd_ativa?('<span class="flag">GD ativa'+(l.concorrente?(": "+l.concorrente):"")+'</span>'):"—")+'</td></tr>').join("")+'</table>';
+}
+
+async function carregarFaturas(){
+const{data}=await sb.from("faturas").select("id,cliente_id,mes_ref,total_cobrar,data_vencimento,status_pagamento,link_boleto").neq("status_pagamento","pago").order("data_vencimento",{ascending:true}).limit(20);
+const el=$("faturas");
+if(!data||!data.length){el.innerHTML='<span class="dim">Nenhuma fatura em aberto.</span>';return;}
+el.innerHTML='<table><tr><th>Cliente</th><th>Mês</th><th>Valor</th><th>Venc.</th><th>Status</th><th>Boleto</th></tr>'+data.map(f=>'<tr><td>'+f.cliente_id+'</td><td>'+(f.mes_ref||"-")+'</td><td>'+brl(f.total_cobrar)+'</td><td>'+(f.data_vencimento||"-")+'</td><td>'+(f.status_pagamento||"-")+'</td><td>'+(f.link_boleto?('<a href="'+f.link_boleto+'" target="_blank">abrir</a>'):"-")+'</td></tr>').join("")+'</table>';
+}
+
+$("mesref").addEventListener("change",()=>{carregarKpis();});
+sb.auth.getSession().then(({data})=>{if(data.session)checarAdmin();});
+</script>
+</body>
+</html>
