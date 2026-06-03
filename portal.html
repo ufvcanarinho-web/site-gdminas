@@ -66,6 +66,9 @@ footer{text-align:center;color:var(--cinza);font-size:.78rem;padding:24px}
 <input id="senhaIn" type="password" placeholder="••••••••" autocomplete="current-password">
 <button class="cta" id="btnEntrar">Entrar</button>
 <div class="msg" id="msgIn"></div>
+<div style="text-align:center;color:var(--cinza);font-size:.8rem;margin:16px 0 8px">ou</div>
+<button class="cta" id="btnGoogle" style="background:#fff;color:#3c4043;border:1.5px solid #dadce0;display:flex;align-items:center;justify-content:center;gap:10px"><span style="font-weight:800;font-size:1.05rem"><span style="color:#4285F4">G</span><span style="color:#EA4335">o</span><span style="color:#FBBC05">o</span><span style="color:#4285F4">g</span><span style="color:#34A853">l</span><span style="color:#EA4335">e</span></span> — Entrar com Google</button>
+<div class="msg" id="msgGoogle"></div>
 </div>
 
 <div id="boxCadastrar" style="display:none">
@@ -90,7 +93,7 @@ footer{text-align:center;color:var(--cinza);font-size:.78rem;padding:24px}
 </div>
 </div>
 
-<footer>GDMINAS Energia · UFV Canarinho Geração de Energia Ltda · Suporte: (35) 99940-3060</footer>
+<footer>GDMINAS Energia · UFV Canarinho Geração de Energia Ltda · Suporte: <a href="https://wa.me/5535999403060" target="_blank" style="color:var(--laranja);font-weight:600">(35) 99940-3060</a></footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
@@ -139,6 +142,12 @@ if(data.session){m.className="msg ok";m.textContent="Conta criada! Entrando...";
 else{m.className="msg ok";m.textContent="Conta criada! Verifique seu e-mail para confirmar e depois use 'Entrar'.";}
 }
 
+$("btnGoogle").addEventListener("click",async()=>{
+const m=$("msgGoogle");m.className="msg";
+const{error}=await sb.auth.signInWithOAuth({provider:"google",options:{redirectTo:location.origin+"/portal"}});
+if(error){m.className="msg erro";m.textContent="Login com Google indisponível no momento. Use e-mail e senha ou fale pelo WhatsApp.";}
+});
+
 $("btnSair").onclick=async()=>{await sb.auth.signOut();location.reload();};
 
 async function carregarPainel(){
@@ -146,7 +155,7 @@ const{data:clientes}=await sb.from("clientes").select("*, usinas(codigo,nome,cid
 $("auth").style.display="none";$("painel").style.display="block";$("btnSair").style.display="inline-block";
 if(!clientes||!clientes.length){
 $("ola").textContent="Bem-vindo!";
-$("subInfo").textContent="Sua conta foi criada. Em breve a GDMINAS vincula seu cadastro de cliente e suas faturas aparecem aqui. Dúvidas: (35) 99940-3060.";
+$("subInfo").innerHTML='Sua conta foi criada. Em breve a GDMINAS vincula seu cadastro de cliente e suas faturas aparecem aqui. Dúvidas: <a href="https://wa.me/5535999403060" target="_blank" style="color:var(--laranja);font-weight:600">(35) 99940-3060</a>.';
 return;
 }
 const c=clientes[0];
