@@ -386,6 +386,7 @@ const d=j.dados||{};window.ocrDados=d;
 if(d.valor_total){const v=Math.min(20000,Math.max(200,Math.round(Number(d.valor_total)/50)*50));$("valor").value=v;$("valorTxt").textContent="R$ "+Number(v).toLocaleString("pt-BR");}
 $("btnCalc").click();
 m.className="msg ok";m.textContent="Conta lida! "+(d.valor_total?("Valor R$ "+Number(d.valor_total).toLocaleString("pt-BR")):"")+(d.consumo_kwh?(" · "+d.consumo_kwh+" kWh"):"")+(d.uc?(" · UC "+d.uc):"")+". Confira sua economia abaixo.";
+if(d.tem_gd_ativa){m.style.background="#fff5e6";m.style.color="#8a4b00";m.innerHTML=m.innerHTML+'<br><br><strong>Notamos que sua conta já tem energia solar por assinatura'+(d.concorrente?(' ('+d.concorrente+')'):'')+'.</strong> A GDMINAS troca pra você sem ficar sem desconto: sincronizamos o fim do contrato atual com o início do nosso, sem dupla cobrança. Deixe seu contato abaixo que cuidamos de tudo.';}
 }catch(err){m.className="msg erro";m.textContent="Falha ao enviar a conta. Tente de novo ou preencha manual.";}
 }
 if($("ocrFile"))$("ocrFile").addEventListener("change",e=>processarConta(e.target.files[0]));
@@ -399,7 +400,7 @@ const nome=$("nome").value.trim(),wpp=$("whatsapp").value.trim(),email=$("email"
 m.className="msg";
 if(!nome||!wpp){m.className="msg erro";m.textContent="Preencha nome e WhatsApp.";return;}
 $("btnLead").disabled=true;$("btnLead").textContent="Enviando...";
-const{error}=await gravarLead(nome,wpp,email,"site-simulador",{valor_conta:ult.valor,desconto_simulado:ult.desconto,doc:(window.ocrDados&&window.ocrDados.cpf_cnpj)||null});
+const{error}=await gravarLead(nome,wpp,email,"site-simulador",{valor_conta:ult.valor,desconto_simulado:ult.desconto,doc:(window.ocrDados&&window.ocrDados.cpf_cnpj)||null,tem_gd_ativa:(window.ocrDados&&window.ocrDados.tem_gd_ativa)||null,concorrente:(window.ocrDados&&window.ocrDados.concorrente)||null});
 $("btnLead").disabled=false;$("btnLead").textContent="Quero economizar";
 if(error){m.className="msg erro";m.textContent="Algo deu errado. Fale pelo WhatsApp (35) 99940-3060.";return;}
 m.className="msg ok";m.textContent="Recebemos seu contato! A GDMINAS vai falar com você em breve. 🌞";
