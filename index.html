@@ -263,6 +263,13 @@ var p=v.play();if(p&&p.catch)p.catch(function(){/* autoplay bloqueado: mantém v
 <h2>Simule sua economia agora</h2>
 <p class="intro">Descubra quanto você pode economizar na sua conta de energia com a GDMINAS.</p>
 <div class="box">
+<div style="background:#f3edfa;border:1px dashed #c9b8e6;border-radius:12px;padding:14px;margin-bottom:18px">
+<label for="ocrFile" style="margin:0 0 6px">⚡ Atalho: tem a conta da CEMIG? Suba o PDF/foto ou tire uma foto — a GDMINAS lê e preenche pra você</label>
+<input type="file" id="ocrFile" accept="image/*,application/pdf">
+<input type="file" id="ocrCam" accept="image/*" capture="environment" style="display:none">
+<button type="button" class="cta" id="btnCam" style="margin-top:10px;background:#fff;color:var(--roxo);border:1.5px solid var(--roxo)">📷 Tirar foto da conta</button>
+<div class="msg" id="ocrMsg"></div>
+</div>
 <label for="valor">Valor médio da sua conta de energia</label>
 <div class="range-val" id="valorTxt">R$ 800</div>
 <input id="valor" type="range" min="200" max="20000" step="50" value="800">
@@ -364,6 +371,26 @@ $("rAno").textContent=brl(mes*12);$("r5").textContent=brl(mes*60);
 $("resultado").style.display="block";$("formLead").style.display="block";
 $("resultado").scrollIntoView({behavior:"smooth",block:"nearest"});
 });
+window.ocrDados=null;
+const OCR_URL="https://gvwmkwmwexwrmuegyqpv.supabase.co/functions/v1/ocr-conta";
+async function processarConta(f){
+const m=$("ocrMsg");if(!f)return;
+m.className="msg";m.style.display="block";m.style.background="#eef0fb";m.style.color="#3D1A5C";m.textContent="Lendo sua conta... aguarde uns segundos.";
+if(f.size>6*1024*1024){m.className="msg erro";m.textContent="Arquivo muito grande (máx 6MB).";return;}
+let b64;try{b64=await new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(String(r.result).split(",")[1]);r.onerror=rej;r.readAsDataURL(f);});}catch{m.className="msg erro";m.textContent="Não consegui ler o arquivo.";return;}
+try{
+const resp=await fetch(OCR_URL,{method:"POST",headers:{"Content-Type":"application/json","apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY},body:JSON.stringify({file_base64:b64,mime_type:f.type||"image/jpeg"})});
+const j=await resp.json();
+if(!j.ok){m.className="msg erro";m.textContent=(j.error||"Não consegui ler a conta.")+" Você pode preencher o valor manualmente abaixo.";return;}
+const d=j.dados||{};window.ocrDados=d;
+if(d.valor_total){const v=Math.min(20000,Math.max(200,Math.round(Number(d.valor_total)/50)*50));$("valor").value=v;$("valorTxt").textContent="R$ "+Number(v).toLocaleString("pt-BR");}
+$("btnCalc").click();
+m.className="msg ok";m.textContent="Conta lida! "+(d.valor_total?("Valor R$ "+Number(d.valor_total).toLocaleString("pt-BR")):"")+(d.consumo_kwh?(" · "+d.consumo_kwh+" kWh"):"")+(d.uc?(" · UC "+d.uc):"")+". Confira sua economia abaixo.";
+}catch(err){m.className="msg erro";m.textContent="Falha ao enviar a conta. Tente de novo ou preencha manual.";}
+}
+if($("ocrFile"))$("ocrFile").addEventListener("change",e=>processarConta(e.target.files[0]));
+if($("ocrCam"))$("ocrCam").addEventListener("change",e=>processarConta(e.target.files[0]));
+if($("btnCam"))$("btnCam").addEventListener("click",()=>$("ocrCam").click());
 async function gravarLead(nome,wpp,email,canal,extra){
 return await sb.from("leads").insert(Object.assign({nome,whatsapp:wpp,email:email||null,canal_origem:canal,status:"novo"},extra||{}),{returning:"minimal"});
 }
@@ -372,7 +399,7 @@ const nome=$("nome").value.trim(),wpp=$("whatsapp").value.trim(),email=$("email"
 m.className="msg";
 if(!nome||!wpp){m.className="msg erro";m.textContent="Preencha nome e WhatsApp.";return;}
 $("btnLead").disabled=true;$("btnLead").textContent="Enviando...";
-const{error}=await gravarLead(nome,wpp,email,"site-simulador",{valor_conta:ult.valor,desconto_simulado:ult.desconto});
+const{error}=await gravarLead(nome,wpp,email,"site-simulador",{valor_conta:ult.valor,desconto_simulado:ult.desconto,doc:(window.ocrDados&&window.ocrDados.cpf_cnpj)||null});
 $("btnLead").disabled=false;$("btnLead").textContent="Quero economizar";
 if(error){m.className="msg erro";m.textContent="Algo deu errado. Fale pelo WhatsApp (35) 99940-3060.";return;}
 m.className="msg ok";m.textContent="Recebemos seu contato! A GDMINAS vai falar com você em breve. 🌞";
