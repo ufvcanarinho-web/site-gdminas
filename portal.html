@@ -151,6 +151,7 @@ if(error){m.className="msg erro";m.textContent="Login com Google indisponível n
 $("btnSair").onclick=async()=>{await sb.auth.signOut();location.reload();};
 
 async function carregarPainel(){
+try{await sb.rpc("vincular_meu_cadastro");}catch(e){}
 const{data:clientes}=await sb.from("clientes").select("*, usinas(codigo,nome,cidade)");
 $("auth").style.display="none";$("painel").style.display="block";$("btnSair").style.display="inline-block";
 if(!clientes||!clientes.length){
