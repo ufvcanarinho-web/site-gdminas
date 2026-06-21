@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Atendimento — GDMINAS Energia</title>
+<style>
+:root{--roxo:#5A2D82;--roxo-esc:#3D1A5C;--laranja:#E8751A;--laranja-cl:#F5A623;--verde:#2E7D32;--cinza:#71718A;--bg:#faf7fd;--card:#fff}
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',Helvetica,Arial,sans-serif}
+html,body{height:100%}
+body{background:var(--bg);color:#222;display:flex;flex-direction:column;height:100dvh}
+header{background:linear-gradient(135deg,var(--roxo),var(--roxo-esc));color:#fff;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;flex:0 0 auto}
+header .brand{font-size:1.05rem;font-weight:800}header .brand span{color:var(--laranja-cl)}
+header a,#btnSair{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.4);padding:6px 12px;border-radius:8px;cursor:pointer;font-size:.8rem;text-decoration:none}
+.hbtns{display:flex;gap:8px;align-items:center}
+#btnSair{display:none}
+.app{flex:1 1 auto;min-height:0;display:flex;max-width:1100px;width:100%;margin:0 auto}
+/* AUTH */
+#auth{background:var(--card);border-radius:14px;padding:22px;box-shadow:0 6px 22px rgba(90,45,130,.08);max-width:420px;margin:40px auto;align-self:flex-start}
+h2{color:var(--roxo);font-size:1.1rem;margin-bottom:12px}
+label{display:block;font-size:.82rem;color:var(--roxo-esc);font-weight:600;margin:12px 0 5px}
+input,textarea{width:100%;padding:11px 13px;border:1.5px solid #e4dcf0;border-radius:9px;font-size:.95rem;background:#fff}
+input:focus,textarea:focus{outline:none;border-color:var(--roxo)}
+button.cta{background:linear-gradient(135deg,var(--laranja-cl),var(--laranja));color:#fff;border:none;padding:12px 18px;border-radius:9px;font-weight:700;cursor:pointer}
+button.cta:disabled{opacity:.6;cursor:wait}
+.msg{margin-top:12px;padding:10px 12px;border-radius:8px;font-size:.86rem;display:none}
+.msg.ok{background:#e6f4ea;color:var(--verde);display:block}.msg.erro{background:#fde8e8;color:#a12;display:block}.msg.info{background:#eef0fb;color:var(--roxo-esc);display:block}
+.dim{color:var(--cinza);font-size:.82rem}
+/* PANES */
+#painel{display:none;flex:1 1 auto;min-height:0;width:100%}
+.panes{display:flex;height:100%;width:100%;background:var(--card)}
+.lista{flex:0 0 340px;border-right:1px solid #eee;overflow-y:auto;display:flex;flex-direction:column}
+.lista .topo{padding:12px 14px;border-bottom:1px solid #eee;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:#fff;z-index:2}
+.conv{padding:12px 14px;border-bottom:1px solid #f3eefb;cursor:pointer}
+.conv:hover{background:#faf7fd}.conv.sel{background:#f3edfa}
+.conv .l1{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.conv .nm{font-weight:700;color:var(--roxo-esc);font-size:.92rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.conv .tm{font-size:.68rem;color:var(--cinza);flex:0 0 auto}
+.conv .snip{font-size:.82rem;color:#555;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:3px}
+.badge{background:#E8751A;color:#fff;font-size:.62rem;padding:2px 7px;border-radius:10px;font-weight:700}
+.badge.gray{background:#cdbfe0;color:#3D1A5C}
+/* THREAD */
+.thread{flex:1 1 auto;min-width:0;display:flex;flex-direction:column}
+.thead{padding:10px 14px;border-bottom:1px solid #eee;display:flex;align-items:center;gap:10px;flex:0 0 auto}
+.thead .back{display:none;background:#f3edfa;border:none;color:var(--roxo);border-radius:8px;padding:6px 10px;cursor:pointer;font-weight:700}
+.thead .who{font-weight:800;color:var(--roxo-esc)}
+.thead .win{font-size:.68rem;padding:2px 8px;border-radius:10px;margin-left:auto}
+.win.open{background:#e6f4ea;color:var(--verde)}.win.closed{background:#fdeee0;color:#8a4b00}
+.msgs{flex:1 1 auto;overflow-y:auto;padding:16px;background:#f7f4fb;display:flex;flex-direction:column;gap:8px}
+.bub{max-width:78%;padding:9px 12px;border-radius:12px;font-size:.9rem;line-height:1.35;white-space:pre-wrap;word-wrap:break-word}
+.bub .meta{font-size:.62rem;color:var(--cinza);margin-top:4px;text-align:right}
+.bub.in{align-self:flex-start;background:#fff;border:1px solid #eadff7;border-bottom-left-radius:3px}
+.bub.out{align-self:flex-end;background:#e7d8f5;border-bottom-right-radius:3px}
+.bub.bot{align-self:flex-end;background:#eef0fb}
+.replybar{flex:0 0 auto;display:flex;gap:8px;padding:10px;border-top:1px solid #eee;align-items:flex-end;background:#fff}
+.replybar textarea{resize:none;height:44px;max-height:120px}
+.replybar button{flex:0 0 auto;height:44px}
+.empty{margin:auto;color:var(--cinza);text-align:center;padding:24px}
+@media(max-width:720px){
+ .lista{flex-basis:100%}
+ .panes.viewing .lista{display:none}
+ .panes:not(.viewing) .thread{display:none}
+ .thead .back{display:inline-block}
+}
+</style>
+</head>
+<body>
+<header>
+<div class="brand">GD<span>MINAS</span> · Atendimento</div>
+<div class="hbtns">
+<a href="gestao.html">← Gestão</a>
+<button id="btnSair">Sair</button>
+</div>
+</header>
+
+<div class="app">
+<div id="auth">
+<h2>Acesso da equipe</h2>
+<p class="dim">Inbox do WhatsApp comercial (35) 99940-3060.</p>
+<label for="email">E-mail</label>
+<input id="email" type="email" autocomplete="email">
+<label for="senha">Senha</label>
+<input id="senha" type="password" autocomplete="current-password">
+<button class="cta" id="btnEntrar" style="width:100%;margin-top:14px">Entrar</button>
+<div class="msg" id="msgAuth"></div>
+</div>
+
+<div id="painel">
+<div class="panes" id="panes">
+<div class="lista">
+<div class="topo"><strong style="color:var(--roxo)">Conversas</strong><button class="cta" id="btnRefresh" style="padding:6px 10px;font-size:.78rem">↻</button></div>
+<div id="convs"><p class="dim" style="padding:14px">carregando...</p></div>
+</div>
+<div class="thread">
+<div class="thead">
+<button class="back" id="btnBack">←</button>
+<div class="who" id="who">Selecione uma conversa</div>
+<div class="win" id="win" style="display:none"></div>
+</div>
+<div class="msgs" id="msgs"><div class="empty">👈 Escolha uma conversa para ver e responder.</div></div>
+<div class="replybar" id="replybar" style="display:none">
+<textarea id="resp" placeholder="Escreva a resposta..."></textarea>
+<button class="cta" id="btnEnviar">Enviar</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SB_URL="https://gvwmkwmwexwrmuegyqpv.supabase.co";
+const SB_KEY="sb_publishable_-kHLyf4_FSVRvFRlsibsTw_Yy8n33Ts";
+const sb=supabase.createClient(SB_URL,SB_KEY);
+const $=id=>document.getElementById(id);
+const DIA=86400000;
+
+// numero do gestor (canal IA + alertas) — fica FORA do inbox de clientes
+function canon(w){let d=String(w||"").replace(/\D/g,"");if(d.startsWith("55"))d=d.slice(2);const ddd=d.slice(0,2);let loc=d.slice(2);if(loc.length===9&&loc.startsWith("9"))loc=loc.slice(1);return ddd+loc;}
+const GESTOR=canon("5535988225566");
+
+function fone(w){let d=String(w||"").replace(/\D/g,"");if(d.startsWith("55"))d=d.slice(2);if(d.length>=10){const ddd=d.slice(0,2),n=d.slice(2);return "("+ddd+") "+n.replace(/(\d{4,5})(\d{4})$/,"$1-$2");}return w;}
+function quando(t){const d=new Date(t),ag=new Date();const sameDay=d.toDateString()===ag.toDateString();if(sameDay)return d.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});const ont=new Date(ag-DIA);if(d.toDateString()===ont.toDateString())return "ontem";return d.toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit"});}
+
+let atual=null, convsCache={}, pollTimer=null;
+
+/* ---- AUTH ---- */
+$("btnEntrar").onclick=entrar;
+$("senha").addEventListener("keydown",e=>{if(e.key==="Enter")entrar();});
+async function entrar(){
+const m=$("msgAuth");m.className="msg";
+const email=$("email").value.trim(),senha=$("senha").value;
+if(!email||!senha){m.className="msg erro";m.textContent="Preencha e-mail e senha.";return;}
+$("btnEntrar").disabled=true;$("btnEntrar").textContent="Entrando...";
+const{error}=await sb.auth.signInWithPassword({email,password:senha});
+$("btnEntrar").disabled=false;$("btnEntrar").textContent="Entrar";
+if(error){m.className="msg erro";m.textContent="E-mail ou senha incorretos.";return;}
+checar();
+}
+$("btnSair").onclick=async()=>{await sb.auth.signOut();location.reload();};
+async function checar(){
+const{data:ok}=await sb.rpc("sou_admin");
+if(!ok){$("msgAuth").className="msg erro";$("msgAuth").textContent="Esta conta não é administradora.";await sb.auth.signOut();return;}
+$("auth").style.display="none";$("painel").style.display="block";$("btnSair").style.display="inline-block";
+carregarConversas();
+pollTimer=setInterval(()=>{carregarConversas();if(atual)abrir(atual,true);},12000);
+}
+
+/* ---- LISTA ---- */
+$("btnRefresh").onclick=()=>{carregarConversas();if(atual)abrir(atual,true);};
+async function carregarConversas(){
+const{data,error}=await sb.from("wa_mensagens").select("wa_id,nome,direcao,tipo,texto,status,criado_em").order("criado_em",{ascending:false}).limit(600);
+const el=$("convs");
+if(error){el.innerHTML='<p class="dim" style="padding:14px">Erro ao carregar: '+error.message+'</p>';return;}
+const convs={};
+for(const m of (data||[])){
+ if(!m.wa_id||canon(m.wa_id)===GESTOR) continue; // pula canal do gestor/alertas
+ if(!convs[m.wa_id]){convs[m.wa_id]={wa_id:m.wa_id,nome:m.nome,last:m,lastIn:null};}
+ const c=convs[m.wa_id];
+ if(!c.nome&&m.nome)c.nome=m.nome;
+ if(m.direcao==="in"&&!c.lastIn)c.lastIn=m;
+}
+convsCache=convs;
+const arr=Object.values(convs);
+if(!arr.length){el.innerHTML='<p class="dim" style="padding:14px">Nenhuma conversa de cliente ainda.</p>';return;}
+el.innerHTML=arr.map(c=>{
+ const precisa=c.last.direcao==="in"&&(c.last.status==="escalado"||c.last.status==="para_validacao");
+ const aberta=c.lastIn&&(Date.now()-new Date(c.lastIn.criado_em).getTime()<DIA);
+ const nm=c.nome||fone(c.wa_id);
+ const snip=(c.last.direcao==="out"?"você: ":"")+(c.last.texto||("["+c.last.tipo+"]"));
+ return '<div class="conv'+(atual===c.wa_id?' sel':'')+'" data-wa="'+c.wa_id+'">'
+  +'<div class="l1"><span class="nm">'+esc(nm)+'</span><span class="tm">'+quando(c.last.criado_em)+'</span></div>'
+  +'<div class="snip">'+esc(snip)+'</div>'
+  +'<div style="margin-top:5px;display:flex;gap:6px">'
+   +(precisa?'<span class="badge">responder</span>':'')
+   +(!aberta?'<span class="badge gray">+24h</span>':'')
+  +'</div></div>';
+}).join("");
+el.querySelectorAll(".conv").forEach(d=>d.onclick=()=>abrir(d.dataset.wa));
+}
+
+/* ---- THREAD ---- */
+async function abrir(wa,silent){
+atual=wa;
+$("panes").classList.add("viewing");
+const c=convsCache[wa]||{};
+$("who").textContent=(c.nome?c.nome+" · ":"")+fone(wa);
+if(!silent){document.querySelectorAll(".conv").forEach(d=>d.classList.toggle("sel",d.dataset.wa===wa));$("msgs").innerHTML='<div class="empty">carregando...</div>';}
+const{data,error}=await sb.from("wa_mensagens").select("direcao,tipo,texto,status,criado_em").eq("wa_id",wa).order("criado_em",{ascending:true}).limit(300);
+if(error){$("msgs").innerHTML='<div class="empty">Erro: '+error.message+'</div>';return;}
+const msgs=$("msgs");
+const stick=msgs.scrollTop+msgs.clientHeight>=msgs.scrollHeight-40;
+msgs.innerHTML=(data||[]).map(m=>{
+ const cls=m.direcao==="in"?"in":(m.status==="respondida_auto"||m.status==="escalado"?"bot":"out");
+ const tag=m.direcao==="out"?(m.status==="respondida_auto"?"🤖 bot":m.status==="escalado"?"🤖 auto":m.status==="gestor_out"?"🧠 IA":"você"):"";
+ const body=m.texto||("["+m.tipo+"]");
+ return '<div class="bub '+cls+'">'+esc(body)+'<div class="meta">'+(tag?tag+" · ":"")+quando(m.criado_em)+(m.status==="erro"?" · ❌ falhou":"")+'</div></div>';
+}).join("")||'<div class="empty">Sem mensagens.</div>';
+// janela 24h
+const lastIn=[...(data||[])].reverse().find(m=>m.direcao==="in");
+const aberta=lastIn&&(Date.now()-new Date(lastIn.criado_em).getTime()<DIA);
+const win=$("win");win.style.display="inline-block";
+win.className="win "+(aberta?"open":"closed");win.textContent=aberta?"janela aberta":"janela +24h (só template)";
+$("replybar").style.display="flex";
+if(!silent||stick)msgs.scrollTop=msgs.scrollHeight;
+}
+$("btnBack").onclick=()=>{$("panes").classList.remove("viewing");atual=null;};
+
+/* ---- ENVIAR ---- */
+$("btnEnviar").onclick=enviar;
+$("resp").addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();enviar();}});
+async function enviar(){
+const txt=$("resp").value.trim();if(!txt||!atual)return;
+$("btnEnviar").disabled=true;
+const{data:sess}=await sb.auth.getSession();
+const tok=sess&&sess.session?sess.session.access_token:SB_KEY;
+try{
+ const resp=await fetch(SB_URL+"/functions/v1/whatsapp-send",{method:"POST",headers:{"Content-Type":"application/json","apikey":SB_KEY,"Authorization":"Bearer "+tok},body:JSON.stringify({to:atual,text:txt})});
+ const j=await resp.json();
+ if(!j.ok){
+  const er=j.resp&&j.resp.error?j.resp.error:{};
+  const fechada=String(er.code)==="131047"||/24|re-engag|outside/i.test(er.message||"");
+  alert(fechada?"Não enviou: a janela de 24h fechou (o cliente não te escreve há mais de 1 dia). Só dá pra reabrir com um template aprovado.":("Não enviou: "+(er.message||"erro desconhecido")));
+ }else{
+  $("resp").value="";
+ }
+}catch(e){alert("Falha de rede ao enviar.");}
+$("btnEnviar").disabled=false;
+abrir(atual,true);carregarConversas();
+}
+
+function esc(s){return String(s==null?"":s).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));}
+
+sb.auth.getSession().then(({data})=>{if(data.session)checar();});
+</script>
+</body>
+</html>
