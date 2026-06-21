@@ -4,9 +4,10 @@
 
 ESTA SESSÃO NÃO TOCA EM NADA antes de cumprir, NESTA ORDEM:
 
-1. LER o ponto de entrada e a série viva:
-   - Drive › 00_LEIA_PRIMEIRO › MESTRE_00_PONTO_DE_ENTRADA_<data mais recente>
-   - Série 01→05 (17/06) + BORBOLETA_MODUS_OPERANDI (conduta).
+1. LER o índice único (manda em tudo) e a série viva:
+   - Drive › 00_LEIA_PRIMEIRO › 00_VIGENCIA_E_FAXINA (versão mais recente) = LISTA BRANCA.
+     Ler SÓ os arquivos da Lista Branca; IGNORAR os da Lista de Exclusão.
+   - Série 01→05 (17/06) + BORBOLETA_MODUS_OPERANDI + adendos (conduta).
 2. CONFERIR O ESTADO REAL (não o que o doc diz):
    - Supabase (gvwmkwmwexwrmuegyqpv), site no ar, WhatsApp 99940-3060, rotinas 24/7.
 3. POSTAR A ABERTURA (PT claro, sem jargão):
